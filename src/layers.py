@@ -5,7 +5,7 @@ from torch.nn.modules.batchnorm import BatchNorm2d
 from torch.nn.utils import spectral_norm
 
 
-class Conv2d(nn.Module):
+class SpectralConv2d(nn.Module):
 
     def __init__(self, *args, **kwargs):
         super().__init__()
@@ -17,7 +17,7 @@ class Conv2d(nn.Module):
         return self._conv(input)
 
 
-class ConvTranspose2d(nn.Module):
+class SpectralConvTranspose2d(nn.Module):
 
     def __init__(self, *args, **kwargs):
         super().__init__()
@@ -51,7 +51,7 @@ class InitLayer(nn.Module):
         super().__init__()
 
         self._layers = nn.Sequential(
-                ConvTranspose2d(
+                SpectralConvTranspose2d(
                         in_channels=in_channels,
                         out_channels=out_channels * 2,
                         kernel_size=4,
@@ -75,7 +75,7 @@ class SLEBlock(nn.Module):
 
         self._layers = nn.Sequential(
                 nn.AdaptiveAvgPool2d(output_size=4),
-                Conv2d(
+                SpectralConv2d(
                         in_channels=in_channels,
                         out_channels=out_channels,
                         kernel_size=4,
@@ -84,7 +84,7 @@ class SLEBlock(nn.Module):
                         bias=False,
                     ),
                 nn.SiLU(),
-                Conv2d(
+                SpectralConv2d(
                         in_channels=out_channels,
                         out_channels=out_channels,
                         kernel_size=1,
@@ -108,7 +108,7 @@ class UpsampleBlockT1(nn.Module):
 
         self._layers = nn.Sequential(
                 nn.Upsample(scale_factor=2, mode='nearest'),
-                Conv2d(
+                SpectralConv2d(
                         in_channels=in_channels,
                         out_channels=out_channels * 2,
                         kernel_size=3,
@@ -132,7 +132,7 @@ class UpsampleBlockT2(nn.Module):
 
         self._layers = nn.Sequential(
                 nn.Upsample(scale_factor=2, mode='nearest'),
-                Conv2d(
+                SpectralConv2d(
                         in_channels=in_channels,
                         out_channels=out_channels * 2,
                         kernel_size=3,
@@ -143,7 +143,7 @@ class UpsampleBlockT2(nn.Module):
                 Noise(),
                 BatchNorm2d(num_features=out_channels * 2),
                 nn.GLU(dim=1),
-                Conv2d(
+                SpectralConv2d(
                         in_channels=out_channels,
                         out_channels=out_channels * 2,
                         kernel_size=3,
@@ -167,7 +167,7 @@ class DownsampleBlockT1(nn.Module):
         super().__init__()
 
         self._layers = nn.Sequential(
-                Conv2d(
+                SpectralConv2d(
                         in_channels=in_channels,
                         out_channels=out_channels,
                         kernel_size=4,
@@ -190,7 +190,7 @@ class DownsampleBlockT2(nn.Module):
         super().__init__()
 
         self._layers_1 = nn.Sequential(
-                Conv2d(
+                SpectralConv2d(
                         in_channels=in_channels,
                         out_channels=out_channels,
                         kernel_size=4,
@@ -200,7 +200,7 @@ class DownsampleBlockT2(nn.Module):
                     ),
                 nn.BatchNorm2d(num_features=out_channels),
                 nn.LeakyReLU(negative_slope=0.2),
-                Conv2d(
+                SpectralConv2d(
                         in_channels=out_channels,
                         out_channels=out_channels,
                         kernel_size=3,
@@ -217,7 +217,7 @@ class DownsampleBlockT2(nn.Module):
                         kernel_size=2,
                         stride=2,
                     ),
-                Conv2d(
+                SpectralConv2d(
                         in_channels=in_channels,
                         out_channels=out_channels,
                         kernel_size=1,
@@ -257,7 +257,7 @@ class Decoder(nn.Module):
                 UpsampleBlockT1(in_channels=self._channels[16], out_channels=self._channels[32]),
                 UpsampleBlockT1(in_channels=self._channels[32], out_channels=self._channels[64]),
                 UpsampleBlockT1(in_channels=self._channels[64], out_channels=self._channels[128]),
-                Conv2d(
+                SpectralConv2d(
                         in_channels=self._channels[128],
                         out_channels=out_channels,
                         kernel_size=3,
