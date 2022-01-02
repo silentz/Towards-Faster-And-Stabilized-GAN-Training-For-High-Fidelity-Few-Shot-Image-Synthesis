@@ -7,6 +7,7 @@ from torch.nn.utils import spectral_norm
 class Conv2d(nn.Module):
 
     def __init__(self, *args, **kwargs):
+        super().__init__()
         self._conv = spectral_norm(
                 nn.Conv2d(*args, **kwargs)
             )
@@ -18,6 +19,7 @@ class Conv2d(nn.Module):
 class ConvTranspose2d(nn.Module):
 
     def __init__(self, *args, **kwargs):
+        super().__init__()
         self._conv = spectral_norm(
                 nn.ConvTranspose2d(*args, **kwargs)
             )
@@ -29,18 +31,13 @@ class ConvTranspose2d(nn.Module):
 class Linear(nn.Module):
 
     def __init__(self, *args, **kwargs):
+        super().__init__()
         self._linear = spectral_norm(
                 nn.Linear(*args, **kwargs)
             )
 
     def forward(self, input: torch.Tensor) -> torch.Tensor:
         return self._linear(input)
-
-
-class Swish(nn.Module):
-
-    def forward(self, input: torch.Tensor) -> torch.Tensor:
-        return input * torch.sigmoid(input)
 
 
 class SLEBlock(nn.Module):
@@ -59,7 +56,7 @@ class SLEBlock(nn.Module):
                         padding=0,
                         bias=False,
                     ),
-                Swish(),
+                nn.SiLU(),
                 Conv2d(
                         in_channels=out_channels,
                         out_channels=out_channels,
