@@ -44,6 +44,29 @@ class Noise(nn.Module):
         return self._weight * noise + input
 
 
+class InitLayer(nn.Module):
+
+    def __init__(self, in_channels: int,
+                       out_channels: int):
+        super().__init__()
+
+        self._layers = nn.Sequential(
+                ConvTranspose2d(
+                        in_channels=in_channels,
+                        out_channels=out_channels * 2,
+                        kernel_size=4,
+                        stride=1,
+                        padding=0,
+                        bias=False,
+                    ),
+                nn.BatchNorm2d(num_features=out_channels * 2),
+                nn.GLU(dim=1),
+            )
+
+    def forward(self, input: torch.Tensor) -> torch.Tensor:
+        return self._layers(input)
+
+
 class SLEBlock(nn.Module):
 
     def __init__(self, in_channels: int,
