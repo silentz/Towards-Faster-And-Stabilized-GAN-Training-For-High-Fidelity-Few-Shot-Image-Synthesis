@@ -222,3 +222,40 @@ class DownsampleBlockT2(nn.Module):
         t1 = self._layers_1(input)
         t2 = self._layers_2(input)
         return (t1 + t2) / 2
+
+
+class Decoder(nn.Module):
+
+    def __init__(self, in_channels: int,
+                       out_channels: int):
+        super().__init__()
+
+        self._channels = {
+                16:   128,
+                32:   64,
+                64:   64,
+                128:  32,
+                256:  16,
+                512:  8,
+                1024: 4,
+            }
+
+        self._layers = nn.Sequential(
+                nn.AdaptiveAvgPool2d(output_size=8),
+                UpsampleBlockT1(in_channels=in_channels,        out_channels=self._channels[16]),
+                UpsampleBlockT1(in_channels=self._channels[16], out_channels=self._channels[32]),
+                UpsampleBlockT1(in_channels=self._channels[32], out_channels=self._channels[64]),
+                UpsampleBlockT1(in_channels=self._channels[64], out_channels=self._channels[128]),
+                Conv2d(
+                        in_channels=self._channels[128],
+                        out_channels=out_channels,
+                        kernel_size=3,
+                        stride=1,
+                        padding='same',
+                        bias=False,
+                    ),
+                nn.Tanh(),
+            )
+
+    def forward(self, input: torch.Tensor) -> torch.Tensor:
+        return self._layers(input)
