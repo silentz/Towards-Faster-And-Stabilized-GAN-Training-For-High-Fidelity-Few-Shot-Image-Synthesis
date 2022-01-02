@@ -41,6 +41,21 @@ class Linear(nn.Module):
         return self._linear(input)
 
 
+class Noise(nn.Module):
+
+    def __init__(self):
+        super().__init__()
+        self._weight = nn.Parameter(
+                torch.zeros(1),
+                requires_grad=True,
+            )
+
+    def forward(self, input: torch.Tensor) -> torch.Tensor:
+        batch_size, _, height, width = input.shape
+        noise = torch.randn(batch_size, 1, height, width, device=input.device)
+        return self._weight * noise + input
+
+
 class SLEBlock(nn.Module):
 
     def __init__(self, in_channels: int,
@@ -72,21 +87,6 @@ class SLEBlock(nn.Module):
     def forward(self, low_dim: torch.Tensor,
                       high_dim: torch.Tensor) -> torch.Tensor:
         return high_dim * self._layers(low_dim)
-
-
-class Noise(nn.Module):
-
-    def __init__(self):
-        super().__init__()
-        self._weight = nn.Parameter(
-                torch.zeros(1),
-                requires_grad=True,
-            )
-
-    def forward(self, input: torch.Tensor) -> torch.Tensor:
-        batch_size, _, height, width = input.shape
-        noise = torch.randn(batch_size, 1, height, width, device=input.device)
-        return self._weight * noise + input
 
 
 class UpsampleBlockT1(nn.Module):
@@ -147,3 +147,78 @@ class UpsampleBlockT2(nn.Module):
 
     def forward(self, input: torch.Tensor) -> torch.Tensor:
         return self._layers(input)
+
+
+class DownsampleBlockT1(nn.Module):
+
+    def __init__(self, in_channels: int,
+                       out_channels: int):
+        super().__init__()
+
+        self._layers = nn.Sequential(
+                Conv2d(
+                        in_channels=in_channels,
+                        out_channels=out_channels,
+                        kernel_size=4,
+                        stride=2,
+                        padding=1,
+                        bias=False,
+                    ),
+                nn.BatchNorm2d(num_features=out_channels),
+                nn.LeakyReLU(negative_slope=0.2),
+            )
+
+    def forward(self, input: torch.Tensor) -> torch.Tensor:
+        return self._layers(input)
+
+
+class DownsampleBlockT2(nn.Module):
+
+    def __init__(self, in_channels: int,
+                       out_channels: int):
+        super().__init__()
+
+        self._layers_1 = nn.Sequential(
+                Conv2d(
+                        in_channels=in_channels,
+                        out_channels=out_channels,
+                        kernel_size=4,
+                        stride=2,
+                        padding=1,
+                        bias=False,
+                    ),
+                nn.BatchNorm2d(num_features=out_channels),
+                nn.LeakyReLU(negative_slope=0.2),
+                Conv2d(
+                        in_channels=out_channels,
+                        out_channels=out_channels,
+                        kernel_size=3,
+                        stride=1,
+                        padding='same',
+                        bias=False,
+                    ),
+                nn.BatchNorm2d(num_features=out_channels),
+                nn.LeakyReLU(negative_slope=0.2),
+            )
+
+        self._layers_2 = nn.Sequential(
+                nn.AvgPool2d(
+                        kernel_size=2,
+                        stride=2,
+                    ),
+                Conv2d(
+                        in_channels=in_channels,
+                        out_channels=out_channels,
+                        kernel_size=1,
+                        stride=1,
+                        padding=0,
+                        bias=False,
+                    ),
+                nn.BatchNorm2d(num_features=out_channels),
+                nn.LeakyReLU(negative_slope=0.2),
+            )
+
+    def forward(self, input: torch.Tensor) -> torch.Tensor:
+        t1 = self._layers_1(input)
+        t2 = self._layers_2(input)
+        return (t1 + t2) / 2
