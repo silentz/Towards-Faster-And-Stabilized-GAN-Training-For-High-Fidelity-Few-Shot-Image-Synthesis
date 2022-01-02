@@ -29,18 +29,6 @@ class ConvTranspose2d(nn.Module):
         return self._conv(input)
 
 
-class Linear(nn.Module):
-
-    def __init__(self, *args, **kwargs):
-        super().__init__()
-        self._linear = spectral_norm(
-                nn.Linear(*args, **kwargs)
-            )
-
-    def forward(self, input: torch.Tensor) -> torch.Tensor:
-        return self._linear(input)
-
-
 class Noise(nn.Module):
 
     def __init__(self):
