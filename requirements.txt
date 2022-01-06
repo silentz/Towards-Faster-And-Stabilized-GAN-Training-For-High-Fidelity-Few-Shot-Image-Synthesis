@@ -1,6 +1,7 @@
 -f https://download.pytorch.org/whl/cu113/torch_stable.html
 
 absl-py==1.0.0
+accelerate==0.5.1
 aiohttp==3.8.1
 aiosignal==1.2.0
 async-timeout==4.0.2
@@ -23,6 +24,7 @@ grpcio==1.43.0
 idna==3.3
 importlib-metadata==4.10.0
 jsonnet==0.18.0
+kornia==0.6.2
 Markdown==3.3.6
 msgpack==1.0.3
 multidict==5.2.0
