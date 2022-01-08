@@ -6,6 +6,8 @@ from typing import Any, Dict
 import torch
 import torchvision
 from torch.utils.data import Dataset
+from PIL import Image
+import numpy as np
 
 
 _dataset = {
@@ -58,7 +60,9 @@ class FewShotImageDataset(FewShotImageDatasetMixin, Dataset):
 
     def __getitem__(self, idx: int) -> Dict[str, Any]:
         img_path = os.path.join(self._root, self._files[idx])
-        image = torchvision.io.read_image(img_path, torchvision.io.ImageReadMode.RGB)
+        image = Image.open(img_path).convert('RGB')
+        image = torch.from_numpy(np.array(image))
+        image = image.permute(2, 0, 1)
         image = self._transforms(image)
         return {'image': image}
 
