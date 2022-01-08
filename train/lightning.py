@@ -4,8 +4,10 @@ from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 
 import lpips
+import wandb
 import random
 import pytorch_lightning as pl
+from typing import Any, Dict, List
 
 from src.collate import collate_fn, Batch
 from src.models import Generator, Discriminrator
@@ -132,3 +134,24 @@ class Module(pl.LightningModule):
         self.log('gen_loss', gen_loss.item())
         self.log('disc_fake_loss', disc_fake_loss.item())
         self.log('disc_real_loss', disc_real_loss.item())
+
+    def validation_step(self, noise: torch.Tensor, batch_idx: int) -> Dict[str, Any]:
+        fake_images = self.generator(noise)
+        fake_images = self._denormalize(fake_images)
+
+        return {
+                'images': fake_images.detach(),
+            }
+
+    def validation_epoch_end(self, outputs: List[Dict[str, Any]]):
+        images = []
+
+        for output in outputs:
+            for image in output['images']:
+                image = wandb.Image(image)
+                images.append(image)
+
+        self.logger.experiment.log({
+                'images': images,
+            })
+
