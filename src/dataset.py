@@ -1,9 +1,11 @@
 import os
 import zipfile
 import urllib.request
-from torch.utils.data import Dataset
 from typing import Any, Dict
+
+import torch
 import torchvision
+from torch.utils.data import Dataset
 
 
 _dataset = {
@@ -47,11 +49,28 @@ class FewShotImageDataset(FewShotImageDatasetMixin, Dataset):
         self._root = os.path.join(root, subdir)
         self._files = os.listdir(self._root)
 
+        self._transforms = torchvision.transforms.Compose([
+                torchvision.transforms.Resize((1024, 1024)),
+            ])
+
     def __len__(self):
         return len(self._files)
 
     def __getitem__(self, idx: int) -> Dict[str, Any]:
         img_path = os.path.join(self._root, self._files[idx])
         image = torchvision.io.read_image(img_path, torchvision.io.ImageReadMode.RGB)
+        image = self._transforms(image)
         return {'image': image}
 
+
+class NoiseDataset(Dataset):
+
+    def __init__(self, size: int, channels: int):
+        self._size = size
+        self._channels = channels
+
+    def __len__(self):
+        return self._size
+
+    def __getitem__(self, idx: int) -> torch.Tensor:
+        return torch.randn(1, self._channels)
