@@ -17,7 +17,7 @@ trainer:
   logger:
     class_path: pytorch_lightning.loggers.WandbLogger
     init_args:
-      project: inpainting
+      project: fastgan
       save_dir: lightning_logs/
 
 model:
