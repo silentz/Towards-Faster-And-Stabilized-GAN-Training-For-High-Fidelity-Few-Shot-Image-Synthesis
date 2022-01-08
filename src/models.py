@@ -78,7 +78,9 @@ class Generator(nn.Module):
                 nn.Tanh(),
             )
 
-    def forward(self, input: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+    def forward(self, input: torch.Tensor) -> \
+            torch.Tensor:
+            #  Tuple[torch.Tensor, torch.Tensor]:
         size_4  = self._init(input)
         size_8  = self._upsample_8(size_4)
         size_16 = self._upsample_16(size_8)
@@ -91,10 +93,11 @@ class Generator(nn.Module):
 
         size_1024 = self._upsample_1024(size_512)
 
-        out_128  = self._out_128 (size_128)
+        #  out_128  = self._out_128 (size_128)
         out_1024 = self._out_1024(size_1024)
 
-        return out_128, out_1024
+        #  return out_128, out_1024
+        return out_1024
 
 
 class Discriminrator(nn.Module):
