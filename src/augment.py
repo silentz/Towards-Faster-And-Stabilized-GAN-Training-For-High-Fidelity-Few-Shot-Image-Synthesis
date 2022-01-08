@@ -26,7 +26,7 @@ class DiffAugment(nn.Module):
                         translate=(0, 0),
                         shear=(0, 0),
                         padding_mode='zeros',
-                    )
+                    ),
             )
 
     def forward(self, images: torch.Tensor) -> torch.Tensor:
