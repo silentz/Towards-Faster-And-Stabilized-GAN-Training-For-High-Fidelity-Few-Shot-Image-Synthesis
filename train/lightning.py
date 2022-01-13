@@ -13,6 +13,7 @@ from src.collate import collate_fn, Batch
 from src.models import Generator, Discriminrator
 from src.augment import DiffAugment
 from src.utils import crop_image_part, init_weights
+from src.sampler import InfiniteSampler
 
 
 class DataModule(pl.LightningDataModule):
@@ -31,6 +32,7 @@ class DataModule(pl.LightningDataModule):
                 'batch_size': train_batch_size,
                 'num_workers': train_num_workers,
                 'collate_fn': collate_fn,
+                'sampler': InfiniteSampler(train_dataset),
             }
         self.val_dataloader_kwargs = {
                 'batch_size': val_batch_size,
