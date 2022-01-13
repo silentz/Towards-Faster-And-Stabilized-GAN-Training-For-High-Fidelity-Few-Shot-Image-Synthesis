@@ -25,8 +25,8 @@ def crop_image_part(image: torch.Tensor,
 
 def init_weights(module: nn.Module):
     if isinstance(module, nn.Conv2d):
-        torch.nn.init.normal(module.weight, 0.0, 0.02)
+        torch.nn.init.normal_(module.weight, 0.0, 0.02)
 
     if isinstance(module, nn.BatchNorm2d):
-        torch.nn.init.normal(module.weight, 1.0, 0.02)
+        torch.nn.init.normal_(module.weight, 1.0, 0.02)
         module.bias.data.fill_(0)
