@@ -12,7 +12,7 @@ from typing import Any, Dict, List
 from src.collate import collate_fn, Batch
 from src.models import Generator, Discriminrator
 from src.augment import DiffAugment
-from src.utils import crop_image_part
+from src.utils import crop_image_part, init_weights
 
 
 class DataModule(pl.LightningDataModule):
@@ -63,7 +63,8 @@ class Module(pl.LightningModule):
         self.generator = Generator(in_channels=self._in_channels, out_channels=3)
         self.discriminator = Discriminrator(in_channels=3)
 
-        # TODO: init weights
+        self.generator.apply(init_weights)
+        self.discriminator.apply(init_weights)
 
     def configure_optimizers(self):
         gen_optim = torch.optim.Adam(
