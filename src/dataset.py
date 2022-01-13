@@ -77,4 +77,4 @@ class NoiseDataset(Dataset):
         return self._size
 
     def __getitem__(self, idx: int) -> torch.Tensor:
-        return torch.randn(self._channels, 1, 1)
+        return torch.zeros(self._channels, 1, 1).normal_(0.0, 1.0)

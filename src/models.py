@@ -79,8 +79,7 @@ class Generator(nn.Module):
             )
 
     def forward(self, input: torch.Tensor) -> \
-            torch.Tensor:
-            #  Tuple[torch.Tensor, torch.Tensor]:
+            Tuple[torch.Tensor, torch.Tensor]:
         size_4  = self._init(input)
         size_8  = self._upsample_8(size_4)
         size_16 = self._upsample_16(size_8)
@@ -93,11 +92,11 @@ class Generator(nn.Module):
 
         size_1024 = self._upsample_1024(size_512)
 
-        #  out_128  = self._out_128 (size_128)
+        out_128  = self._out_128 (size_128)
         out_1024 = self._out_1024(size_1024)
 
         #  return out_128, out_1024
-        return out_1024
+        return out_1024, out_128
 
 
 class Discriminrator(nn.Module):
@@ -207,14 +206,16 @@ class Discriminrator(nn.Module):
         self._decoder_small = Decoder(in_channels=self._channels[32], out_channels=3)
         self._decoder_piece = Decoder(in_channels=self._channels[32], out_channels=3)
 
-    def forward(self, images: torch.Tensor, image_type: 'Discriminrator.ImageType') -> \
+    def forward(self, images_1024: torch.Tensor,
+                      images_128: torch.Tensor,
+                      image_type: 'Discriminrator.ImageType') -> \
             Union[
                 torch.Tensor,
                 Tuple[torch.Tensor, Tuple[Any, Any, Any]]
             ]:
         # large track
 
-        down_512 = self._init(images)
+        down_512 = self._init(images_1024)
         down_256 = self._downsample_256(down_512)
         down_128 = self._downsample_128(down_256)
 
@@ -229,8 +230,7 @@ class Discriminrator(nn.Module):
 
         # small track
 
-        small_images = F.interpolate(images, size=128)
-        down_small = self._small_track(small_images)
+        down_small = self._small_track(images_128)
 
         # features
 

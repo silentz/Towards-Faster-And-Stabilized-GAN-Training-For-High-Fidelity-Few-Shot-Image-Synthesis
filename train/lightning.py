@@ -89,12 +89,14 @@ class Module(pl.LightningModule):
         dis_optim, gen_optim = self.optimizers()
         real_images = self._normalize(batch.images)
 
-        noise = torch.randn(real_images.shape[0], self._in_channels, 1, 1, device=real_images.device)
-        fake_images = self.generator(noise)
+        noise = torch.zeros(real_images.shape[0], self._in_channels, 1, 1,
+                device=real_images.device).normal_(0.0, 1.0)
+        fake_images_1024, fake_images_128 = self.generator(noise)
 
         # diff augment
         real_images = self.diff_aug(real_images)
-        fake_images = self.diff_aug(fake_images)
+        fake_images_1024 = self.diff_aug(fake_images_1024)
+        fake_images_128 = self.diff_aug(fake_images_128)
 
         # discriminator step real
         dis_optim.zero_grad()
@@ -107,7 +109,9 @@ class Module(pl.LightningModule):
             ])
 
         images_part = crop_image_part(real_images, image_type)
-        disc_out, (dec_large, dec_small, dec_piece) = self.discriminator(real_images, image_type)
+        disc_out, (dec_large, dec_small, dec_piece) = self.discriminator(real_images,
+                                                                         F.interpolate(real_images, size=128),
+                                                                         image_type)
 
         disc_real_loss = F.relu(torch.rand_like(disc_out) * 0.2 + 0.8 - disc_out).mean() + \
                          self.percept_loss(dec_large, F.interpolate(real_images, dec_large.shape[2])).sum() + \
@@ -117,7 +121,9 @@ class Module(pl.LightningModule):
         self.manual_backward(disc_real_loss)
 
         # discriminator step fake
-        disc_out = self.discriminator(fake_images.detach(), Discriminrator.ImageType.FAKE)
+        disc_out = self.discriminator(fake_images_1024.detach(),
+                                      fake_images_128.detach(),
+                                      Discriminrator.ImageType.FAKE)
         disc_fake_loss = F.relu(torch.rand_like(disc_out) * 0.2 + 0.8 + disc_out).mean()
 
         self.manual_backward(disc_fake_loss)
@@ -126,7 +132,9 @@ class Module(pl.LightningModule):
         # generator step
         gen_optim.zero_grad()
 
-        disc_out = self.discriminator(fake_images, Discriminrator.ImageType.FAKE)
+        disc_out = self.discriminator(fake_images_1024,
+                                      fake_images_128,
+                                      Discriminrator.ImageType.FAKE)
         gen_loss = -disc_out.mean()
 
         self.manual_backward(gen_loss)
@@ -137,7 +145,7 @@ class Module(pl.LightningModule):
         self.log('disc_real_loss', disc_real_loss.item())
 
     def validation_step(self, noise: torch.Tensor, batch_idx: int) -> Dict[str, Any]:
-        fake_images = self.generator(noise)
+        fake_images, _ = self.generator(noise)
         fake_images = self._denormalize(fake_images)
 
         return {
