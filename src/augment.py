@@ -11,9 +11,9 @@ class DiffAugment(nn.Module):
         self._layers = nn.Sequential(
                 kornia.augmentation.ColorJitter(
                         p=1.0,
-                        brightness=0.1,
-                        contrast=0.1,
-                        saturation=0.1,
+                        brightness=0.5,
+                        contrast=0.5,
+                        saturation=0.5,
                         hue=0.0,
                     ),
                 kornia.augmentation.RandomHorizontalFlip(
@@ -21,9 +21,9 @@ class DiffAugment(nn.Module):
                     ),
                 kornia.augmentation.RandomAffine(
                         p=0.5,
-                        degrees=10,
-                        scale=(0.7, 1.3),
-                        translate=(0, 0),
+                        degrees=0,
+                        scale=(0, 0),
+                        translate=(0.125, 0.125),
                         shear=(0, 0),
                         padding_mode='zeros',
                     ),
