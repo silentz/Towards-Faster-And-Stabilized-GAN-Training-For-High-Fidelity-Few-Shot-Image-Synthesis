@@ -32,7 +32,7 @@ data:
     init_args:
       root: data/few-shot-images/
       subdir: skulls/img/
-  train_batch_size: 4
+  train_batch_size: 6
   train_num_workers: 8
 
   val_dataset:
