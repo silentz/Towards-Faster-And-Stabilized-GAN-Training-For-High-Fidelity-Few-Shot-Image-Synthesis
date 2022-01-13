@@ -22,7 +22,7 @@ class DiffAugment(nn.Module):
                 kornia.augmentation.RandomAffine(
                         p=0.5,
                         degrees=0,
-                        scale=(0, 0),
+                        scale=(0.7, 1.3),
                         translate=(0.125, 0.125),
                         shear=(0, 0),
                         padding_mode='zeros',
