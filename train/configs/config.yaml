@@ -31,7 +31,7 @@ data:
     class_path: src.dataset.FewShotImageDataset
     init_args:
       root: data/few-shot-images/
-      subdir: skulls/img/
+      subdir: shells/img/
   train_batch_size: 8
   train_num_workers: 8
 
