@@ -16,9 +16,6 @@ class DiffAugment(nn.Module):
                         saturation=0.5,
                         hue=0.0,
                     ),
-                kornia.augmentation.RandomHorizontalFlip(
-                        p=0.5,
-                    ),
                 kornia.augmentation.RandomAffine(
                         p=0.5,
                         degrees=0,

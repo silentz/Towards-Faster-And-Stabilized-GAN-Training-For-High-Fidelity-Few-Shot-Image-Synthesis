@@ -53,6 +53,7 @@ class FewShotImageDataset(FewShotImageDatasetMixin, Dataset):
 
         self._transforms = torchvision.transforms.Compose([
                 torchvision.transforms.Resize((1024, 1024)),
+                torchvision.transforms.RandomHorizontalFlip(p=0.5),
             ])
 
     def __len__(self):
