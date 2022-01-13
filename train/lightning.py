@@ -69,10 +69,10 @@ class Module(pl.LightningModule):
         self.discriminator.apply(init_weights)
 
     def configure_optimizers(self):
-        gen_optim = torch.optim.SGD(
+        gen_optim = torch.optim.Adam(
                 self.generator.parameters(),
                 lr=self._optim_lr,
-                momentum=0.9,
+                betas=(self._optim_beta_1, self._optim_beta_2),
             )
         dis_optim = torch.optim.Adam(
                 self.discriminator.parameters(),
