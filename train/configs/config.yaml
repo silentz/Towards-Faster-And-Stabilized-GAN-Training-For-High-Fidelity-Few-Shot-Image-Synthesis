@@ -7,7 +7,7 @@ trainer:
   val_check_interval: 1000
   num_sanity_val_steps: 2
   limit_val_batches: 2
-  precision: 32
+  precision: 16
   deterministic: false
   auto_lr_find: false
   callbacks:
@@ -32,7 +32,7 @@ data:
     init_args:
       root: data/few-shot-images/
       subdir: skulls/img/
-  train_batch_size: 6
+  train_batch_size: 8
   train_num_workers: 8
 
   val_dataset:
