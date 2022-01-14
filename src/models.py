@@ -97,8 +97,6 @@ class Generator(nn.Module):
 
         out_128  = self._out_128 (size_128)
         out_1024 = self._out_1024(size_1024)
-
-        #  return out_128, out_1024
         return out_1024, out_128
 
 
