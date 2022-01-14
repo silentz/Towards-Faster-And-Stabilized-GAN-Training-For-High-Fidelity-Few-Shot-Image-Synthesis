@@ -1,22 +1,29 @@
 import torch
 import torch.nn as nn
-from .models import Discriminrator
+from enum import Enum
+
+class ImageType(Enum):
+    REAL_UP_L = 0
+    REAL_UP_R = 1
+    REAL_DOWN_R = 2
+    REAL_DOWN_L = 3
+    FAKE = 4
 
 
 def crop_image_part(image: torch.Tensor,
-                    part: Discriminrator.ImageType) -> torch.Tensor:
+                    part: ImageType) -> torch.Tensor:
     size = image.shape[2] // 2
 
-    if part == Discriminrator.ImageType.REAL_UP_L:
+    if part == ImageType.REAL_UP_L:
         return image[:, :, :size, :size]
 
-    elif part == Discriminrator.ImageType.REAL_UP_R:
+    elif part == ImageType.REAL_UP_R:
         return image[:, :, :size, size:]
 
-    elif part == Discriminrator.ImageType.REAL_DOWN_L:
+    elif part == ImageType.REAL_DOWN_L:
         return image[:, :, size:, :size]
 
-    elif part == Discriminrator.ImageType.REAL_DOWN_R:
+    elif part == ImageType.REAL_DOWN_R:
         return image[:, :, size:, size:]
 
     else:

@@ -12,7 +12,7 @@ from typing import Any, Dict, List
 from src.collate import collate_fn, Batch
 from src.models import Generator, Discriminrator
 from src.augment import DiffAugment
-from src.utils import crop_image_part, init_weights
+from src.utils import ImageType, crop_image_part, init_weights
 from src.sampler import InfiniteSampler
 
 
@@ -104,10 +104,10 @@ class Module(pl.LightningModule):
         dis_optim.zero_grad()
 
         image_type = random.choice([
-                Discriminrator.ImageType.REAL_UP_L,
-                Discriminrator.ImageType.REAL_UP_R,
-                Discriminrator.ImageType.REAL_DOWN_R,
-                Discriminrator.ImageType.REAL_DOWN_L,
+                ImageType.REAL_UP_L,
+                ImageType.REAL_UP_R,
+                ImageType.REAL_DOWN_R,
+                ImageType.REAL_DOWN_L,
             ])
 
         images_part = crop_image_part(real_images, image_type)
@@ -125,7 +125,7 @@ class Module(pl.LightningModule):
         # discriminator step fake
         disc_out = self.discriminator(fake_images_1024.detach(),
                                       fake_images_128.detach(),
-                                      Discriminrator.ImageType.FAKE)
+                                      ImageType.FAKE)
         disc_fake_loss = F.relu(torch.rand_like(disc_out) * 0.2 + 0.8 + disc_out).mean()
 
         self.manual_backward(disc_fake_loss)
@@ -136,7 +136,7 @@ class Module(pl.LightningModule):
 
         disc_out = self.discriminator(fake_images_1024,
                                       fake_images_128,
-                                      Discriminrator.ImageType.FAKE)
+                                      ImageType.FAKE)
         gen_loss = -disc_out.mean()
 
         self.manual_backward(gen_loss)

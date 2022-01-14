@@ -1,9 +1,12 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 
-from enum import Enum
 from typing import Any, Tuple, Union
+
+from .utils import (
+    ImageType,
+    crop_image_part,
+)
 
 from .layers import (
     SpectralConv2d,
@@ -100,13 +103,6 @@ class Generator(nn.Module):
 
 
 class Discriminrator(nn.Module):
-
-    class ImageType(Enum):
-        REAL_UP_L = 0
-        REAL_UP_R = 1
-        REAL_DOWN_R = 2
-        REAL_DOWN_L = 3
-        FAKE = 4
 
     def __init__(self, in_channels: int):
         super().__init__()
@@ -208,7 +204,7 @@ class Discriminrator(nn.Module):
 
     def forward(self, images_1024: torch.Tensor,
                       images_128: torch.Tensor,
-                      image_type: 'Discriminrator.ImageType') -> \
+                      image_type: ImageType) -> \
             Union[
                 torch.Tensor,
                 Tuple[torch.Tensor, Tuple[Any, Any, Any]]
@@ -240,23 +236,10 @@ class Discriminrator(nn.Module):
 
         # decoder
 
-        if image_type != Discriminrator.ImageType.FAKE:
+        if image_type != ImageType.FAKE:
             dec_large = self._decoder_large(down_16)
             dec_small = self._decoder_small(down_small)
-            dec_piece = None
-
-            if image_type == Discriminrator.ImageType.REAL_UP_L:
-                dec_piece = self._decoder_piece(down_32[:, :, :8, :8])
-
-            if image_type == Discriminrator.ImageType.REAL_UP_R:
-                dec_piece = self._decoder_piece(down_32[:, :, :8, 8:])
-
-            if image_type == Discriminrator.ImageType.REAL_DOWN_L:
-                dec_piece = self._decoder_piece(down_32[:, :, 8:, :8])
-
-            if image_type == Discriminrator.ImageType.REAL_DOWN_R:
-                dec_piece = self._decoder_piece(down_32[:, :, 8:, 8:])
-
+            dec_piece = crop_image_part(down_32, image_type)
             return features, (dec_large, dec_small, dec_piece)
 
         return features
