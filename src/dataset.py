@@ -11,8 +11,8 @@ import numpy as np
 
 
 _dataset = {
-    'url': 'http://silentz.ml/few-shot-image-datasets.zip',
-    'arc': 'archive.zip',
+    'url': 'http://silentz.ml/few-shot-images.zip',
+    'arc': 'few-shot-images.zip',
     'dst': 'few-shot-images',
 }
 

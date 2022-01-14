@@ -30,8 +30,8 @@ data:
   train_dataset:
     class_path: src.dataset.FewShotImageDataset
     init_args:
-      root: data/few-shot-images/
-      subdir: shells/img/
+      root: data/
+      subdir: few-shot-images/cat_faces
   train_batch_size: 8
   train_num_workers: 8
 

@@ -1,0 +1,44 @@
+seed_everything: 42
+
+trainer:
+  gpus: 1
+  max_epochs: 1
+  limit_train_batches: 50000
+  val_check_interval: 1000
+  num_sanity_val_steps: 2
+  limit_val_batches: 2
+  precision: 16
+  deterministic: false
+  auto_lr_find: false
+  callbacks:
+    - class_path: pytorch_lightning.callbacks.model_checkpoint.ModelCheckpoint
+      init_args:
+        dirpath: checkpoints/
+        save_top_k: -1
+  logger:
+    class_path: pytorch_lightning.loggers.WandbLogger
+    init_args:
+      project: fastgan
+      save_dir: lightning_logs/
+
+model:
+  optimizer_lr: 0.0002
+  optimizer_beta_1: 0.5
+  optimizer_beta_2: 0.999
+
+data:
+  train_dataset:
+    class_path: src.dataset.FewShotImageDataset
+    init_args:
+      root: data/
+      subdir: few-shot-images/dog_faces
+  train_batch_size: 8
+  train_num_workers: 8
+
+  val_dataset:
+    class_path: src.dataset.NoiseDataset
+    init_args:
+      size: 8
+      channels: 256
+  val_batch_size: 8
+  val_num_workers: 1
