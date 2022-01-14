@@ -239,7 +239,7 @@ class Discriminrator(nn.Module):
         if image_type != ImageType.FAKE:
             dec_large = self._decoder_large(down_16)
             dec_small = self._decoder_small(down_small)
-            dec_piece = crop_image_part(down_32, image_type)
+            dec_piece = self._decoder_piece(crop_image_part(down_32, image_type))
             return features, (dec_large, dec_small, dec_piece)
 
         return features
