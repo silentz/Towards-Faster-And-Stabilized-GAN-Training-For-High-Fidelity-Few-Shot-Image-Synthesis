@@ -13,4 +13,4 @@ if __name__ == '__main__':
     input = torch.randn(args.n_samples, 256, 1, 1)
 
     output = model(input)
-    torchvision.utils.save_image(output, args.output)
+    torchvision.utils.save_image(output / 255, args.output)
