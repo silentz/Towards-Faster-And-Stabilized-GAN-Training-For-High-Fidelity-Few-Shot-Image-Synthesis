@@ -47,6 +47,7 @@ class DiffAugment(nn.Module):
                 rand_translation,
             ]
 
+    @torch.jit.ignore
     def forward(self, images: torch.Tensor) -> torch.Tensor:
         for aug in self._augs:
             images = aug(images)

@@ -18,6 +18,6 @@ if __name__ == '__main__':
 
     cli.model.to_torchscript(
             file_path=cli.config['torchscript']['path'],
-            method='script',
+            method='trace',
             example_inputs=input_sample,
         )
