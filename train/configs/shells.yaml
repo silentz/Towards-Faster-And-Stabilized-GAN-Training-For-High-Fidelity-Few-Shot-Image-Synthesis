@@ -21,6 +21,12 @@ trainer:
       project: fastgan
       save_dir: lightning_logs/
 
+onnx:
+  path: shells.onnx
+
+torchscript:
+  path: shells.pt
+
 model:
   optimizer_lr: 0.0002
   optimizer_beta_1: 0.5
