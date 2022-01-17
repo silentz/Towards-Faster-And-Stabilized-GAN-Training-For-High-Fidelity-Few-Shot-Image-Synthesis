@@ -21,11 +21,8 @@ trainer:
       project: fastgan
       save_dir: lightning_logs/
 
-onnx:
-  path: anime.onnx
-
 torchscript:
-  path: anime.pt
+  path: export/anime.pt
 
 model:
   optimizer_lr: 0.0002

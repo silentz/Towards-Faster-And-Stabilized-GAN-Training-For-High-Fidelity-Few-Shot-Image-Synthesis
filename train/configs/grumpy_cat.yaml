@@ -21,11 +21,8 @@ trainer:
       project: fastgan
       save_dir: lightning_logs/
 
-onnx:
-  path: grumpy_cat.onnx
-
 torchscript:
-  path: grumpy_cat.pt
+  path: export/grumpy_cat.pt
 
 model:
   optimizer_lr: 0.0002

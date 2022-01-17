@@ -21,11 +21,8 @@ trainer:
       project: fastgan
       save_dir: lightning_logs/
 
-onnx:
-  path: moongate.onnx
-
 torchscript:
-  path: moongate.pt
+  path: export/moongate.pt
 
 model:
   optimizer_lr: 0.0002

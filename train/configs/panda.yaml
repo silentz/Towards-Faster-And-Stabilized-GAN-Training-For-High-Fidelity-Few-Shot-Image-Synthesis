@@ -21,11 +21,8 @@ trainer:
       project: fastgan
       save_dir: lightning_logs/
 
-onnx:
-  path: panda.onnx
-
 torchscript:
-  path: panda.pt
+  path: export/panda.pt
 
 model:
   optimizer_lr: 0.0002

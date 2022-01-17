@@ -16,11 +16,6 @@ if __name__ == '__main__':
 
     input_sample = torch.rand(1, 256, 1, 1)
 
-    cli.model.to_onnx(
-            file_path=cli.config['onnx']['path'],
-            input_sample=input_sample,
-        )
-
     cli.model.to_torchscript(
             file_path=cli.config['torchscript']['path'],
             method='script',

@@ -4,6 +4,8 @@ checkpoints/*
 !checkpoints/.gitkeep
 data/*
 !data/.gitkeep
+export/*
+!export/.gitkeep
 
 
 # Byte-compiled / optimized / DLL files

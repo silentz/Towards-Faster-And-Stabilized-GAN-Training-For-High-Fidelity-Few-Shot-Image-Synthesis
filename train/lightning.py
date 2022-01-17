@@ -87,6 +87,11 @@ class Module(pl.LightningModule):
     def _denormalize(self, input: torch.Tensor) -> torch.Tensor:
         return (input * 127.5) + 127.5
 
+    def forward(self, input: torch.Tensor) -> torch.Tensor:
+        fake_images, _ = self.generator(input)
+        fake_images = self._denormalize(fake_images)
+        return fake_images
+
     def training_step(self, batch: Batch, batch_idx: int) -> None:
         dis_optim, gen_optim = self.optimizers()
         real_images = self._normalize(batch.images)
