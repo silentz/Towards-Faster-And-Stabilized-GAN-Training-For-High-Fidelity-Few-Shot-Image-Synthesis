@@ -88,3 +88,10 @@ python -m train.export --config train/configs/shells.yaml --from_ckpt checkpoint
 ```bash
 python infer.py export/shells.pt # path to exported model (see config)
 ```
+
+### Samples
+
+Trained FastGAN torchscript model is located in second release (see "releases" section of github page of repository).
+Here are samples of generated images (model is trained on shells dataset):
+
+<img src='images/samples.png' width='900'>
