@@ -16,6 +16,9 @@ if __name__ == '__main__':
 
     input_sample = torch.rand(1, 256, 1, 1)
 
+    if cli.config['from_ckpt'] is not None:
+        cli.model.load_from_checkpoint(cli.config['from_ckpt'])
+
     cli.model.to_torchscript(
             file_path=cli.config['torchscript']['path'],
             method='trace',

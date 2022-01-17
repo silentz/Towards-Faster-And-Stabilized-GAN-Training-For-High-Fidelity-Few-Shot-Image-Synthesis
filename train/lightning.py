@@ -67,6 +67,7 @@ class Module(pl.LightningModule):
 
         self.generator.apply(init_weights)
         self.discriminator.apply(init_weights)
+        self.save_hyperparameters()
 
     def configure_optimizers(self):
         gen_optim = torch.optim.Adam(
